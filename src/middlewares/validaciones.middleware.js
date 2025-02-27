@@ -11,7 +11,7 @@ const validarCampos = (req, res, next) => {
 
 
 // Validaciones para registro de usuario
-const validarRegistro = [
+const validateRegister = [
     check("nombre", "El nombre es obligatorio").not().isEmpty(),
     check("apellido", "El apellido es una cadena").optional(),
     check("correo", "Debe ser un correo válido").isEmail(),
@@ -22,7 +22,7 @@ const validarRegistro = [
   ];
 
 // Validaciones para login de usuario
-const validarLogin = [
+const validateLogin = [
     check("correo", "Debe ser un correo válido").isEmail(),
     check("password", "La contraseña es obligatoria").not().isEmpty(),
     validarCampos, // Middleware para manejar errores
@@ -30,7 +30,7 @@ const validarLogin = [
 
 
 // Validaciones para actualizar perfil
-const validarUpdateUsuario = [
+const validateUpdateUser = [
   check("nombre", "El nombre debe tener entre 2 y 100 caracteres")
     .optional()
     .isLength({ min: 2, max: 100 }),
@@ -44,4 +44,22 @@ const validarUpdateUsuario = [
   validarCampos,
 ];
 
-module.exports = { validarUpdateUsuario, validarRegistro, validarLogin  };
+
+const validateCreateCategory = [
+  check("nombre", "El nombre es obligatorio").not().isEmpty(),
+  check("descripcion", "La descripción debe ser una cadena").optional().isString(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errores: errors.array() });
+    }
+    next();
+  },
+];
+
+const validateProduct = [
+  check("nombre", "El nombre es obligatorio").not().isEmpty(),
+  check()
+];
+
+module.exports = { validateUpdateUser, validateRegister, validateLogin, validateProduct, validateCreateCategory };

@@ -3,7 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const authRoutes = require("./src/routes/auth.routes");
-const usuariosRoutes = require("./src/routes/usuarios.routes");
+const userRoutes = require("./src/routes/usuarios.routes");
+const categoriesRoutes = require("./src/routes/categorias.routes");
+const productsRoutes = require("./src/routes/productos.routes");
 const app = express();
  
 // Middlewares
@@ -13,7 +15,9 @@ app.use(morgan("dev"));
 
 //Rutas
 app.use("/api/auth", authRoutes);
-app.use("/api/usuarios", usuariosRoutes);
+app.use("/api/usuarios", userRoutes);
+app.use("/api/categorias", categoriesRoutes);
+app.use("/api/productos", productsRoutes);
 
 // Ruta de prueba
 app.get("/", (req, res) => {

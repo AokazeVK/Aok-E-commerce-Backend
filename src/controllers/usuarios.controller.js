@@ -4,7 +4,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 // Obtener perfil del usuario
-const getUsuario = async (req, res) => {
+const getUser = async (req, res) => {
   try {
     const usuario = await prisma.usuarios.findUnique({
       where: { id: req.usuario.id },
@@ -31,7 +31,7 @@ const getUsuario = async (req, res) => {
 };
 
 // Actualizar perfil
-const updateUsuario = async (req, res) => {
+const updateUser = async (req, res) => {
   // Validar datos
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -55,7 +55,7 @@ const updateUsuario = async (req, res) => {
 };
 
 // Eliminar perfil
-const deleteUsuario = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
     await prisma.usuarios.delete({
       where: { id: req.usuario.id },
@@ -68,4 +68,4 @@ const deleteUsuario = async (req, res) => {
   }
 };
 
-module.exports = { getUsuario, updateUsuario, deleteUsuario };
+module.exports = { getUser, updateUser, deleteUser };

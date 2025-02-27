@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "productos" ALTER COLUMN "peso" SET DATA TYPE VARCHAR(50);
