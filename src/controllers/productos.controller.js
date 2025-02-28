@@ -166,27 +166,19 @@ const deleteImage = async (req, res) => {
 const uploadProductImages = async (req, res) => {
   try {
     const { producto_id } = req.params;
-    const imagenes = req.files; // Lista de imágenes subidas
-
-    if (!producto_id || isNaN(producto_id)) {
-      return res.status(400).json({ error: 'ID de producto inválido' });
-    }
+    const imagenes = req.files; // Lista de imágenes subidas por Multer
 
     if (!imagenes || imagenes.length === 0) {
       return res.status(400).json({ error: 'No se subieron imágenes' });
     }
 
-    // Subir imágenes a Cloudinary y guardar en la base de datos
+    // Guardar las imágenes en la base de datos usando la URL generada por Multer/Cloudinary
     const imagenesGuardadas = await Promise.all(
       imagenes.map(async (imagen, index) => {
-        const resultado = await cloudinary.uploader.upload(imagen.path, {
-          folder: 'productos', // Carpeta en Cloudinary
-        });
-
         return await prisma.imagenes_producto.create({
           data: {
             producto_id: parseInt(producto_id),
-            url_imagen: resultado.secure_url, // Guardar URL de Cloudinary
+            url_imagen: imagen.path, // URL de Cloudinary proporcionada por Multer
             tipo: index === 0 ? 'principal' : 'secundaria', // La primera imagen será principal
             orden: index,
           },
@@ -199,6 +191,7 @@ const uploadProductImages = async (req, res) => {
     res.status(500).json({ error: 'Error al subir las imágenes', detalle: error.message });
   }
 };
+
 
 
 module.exports = {

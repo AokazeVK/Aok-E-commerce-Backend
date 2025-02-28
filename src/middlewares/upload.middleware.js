@@ -5,11 +5,13 @@ const cloudinary = require('../config/cloudinary');
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'productos', // Carpeta en Cloudinary
+    folder: 'productos',
     allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    transformation: [
+      { width: 1000, height: 1000, crop: 'pad', background: 'white', quality: 'auto' }
+    ]
   },
 });
+const uploadMiddleware = multer({ storage }).array('imagenes', 5); // Hasta 5 imágenes
 
-const uploadMultiple = multer({ storage }).array('imagenes', 5); // Hasta 5 imágenes
-
-module.exports = {uploadMultiple};
+module.exports = uploadMiddleware;

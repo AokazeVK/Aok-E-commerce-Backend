@@ -4,7 +4,6 @@ const authMiddleware = require("../middlewares/auth.middleware");
 const adminMiddleware = require("../middlewares/admin.middleware");
 const uploadMiddleware = require("../middlewares/upload.middleware");
 const router = express.Router();
-const upload = require('../config/multer');
 
 // Crear un producto (solo admin)
 router.post("/", authMiddleware, adminMiddleware, productsController.createProduct);
@@ -23,9 +22,11 @@ router.put("/:id", authMiddleware, adminMiddleware, productsController.updatePro
 // Deshabilitar un producto (en lugar de eliminarlo) (solo admin)
 router.put("/:id/disable", authMiddleware, adminMiddleware, productsController.disableProduct);
 
-router.post('/imagenes/:producto_id', uploadMiddleware.uploadMultiple, productsController.uploadProductImages);
+router.post('/imagenes/:producto_id', uploadMiddleware, authMiddleware, adminMiddleware, productsController.uploadProductImages);
+
 router.get('/imagenes/:id', productsController.getImageOfProduct);
-router.delete('/imagenes/:id', productsController.deleteImage);
+
+router.delete('/imagenes/:id', authMiddleware, adminMiddleware, productsController.deleteImage);
 
 
 
