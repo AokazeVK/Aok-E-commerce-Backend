@@ -68,4 +68,26 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { getUser, updateUser, deleteUser };
+const getUsers = async (req, res) => {
+  try {
+      const usuarios = await prisma.usuarios.findMany({
+          select: {
+              id: true,
+              nombre: true,
+              apellido: true,
+              correo: true,
+              telefono: true,
+              rol: true,
+              fecha_registro: true,
+          },
+      });
+
+      res.json(usuarios);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send("Error interno del servidor");
+  }
+};
+
+
+module.exports = { getUser, updateUser, deleteUser, getUsers };

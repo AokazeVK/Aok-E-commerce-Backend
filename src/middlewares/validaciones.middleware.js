@@ -45,7 +45,7 @@ const validateUpdateUser = [
 ];
 
 
-const validateCreateCategory = [
+const validateCategory = [
   check("nombre", "El nombre es obligatorio").not().isEmpty(),
   check("descripcion", "La descripción debe ser una cadena").optional().isString(),
   (req, res, next) => {
@@ -57,9 +57,44 @@ const validateCreateCategory = [
   },
 ];
 
+
 const validateProduct = [
-  check("nombre", "El nombre es obligatorio").not().isEmpty(),
-  check()
+  check("nombre", "El nombre es obligatorio y debe tener entre 3 y 255 caracteres")
+      .not().isEmpty()
+      .isLength({ min: 3, max: 255 }),
+
+  check("descripcion", "La descripción debe ser una cadena").optional().isString(),
+
+  check("precio", "El precio debe ser un número decimal positivo")
+      .isDecimal()
+      .toFloat()
+      .custom(value => value > 0),
+
+  check("stock", "El stock debe ser un número entero no negativo")
+      .isInt({ min: 0 }),
+
+  check("estado_stock", "El estado del stock debe ser 'disponible', 'agotado', o 'bajo'")
+      .optional()
+      .isIn(["disponible", "agotado", "bajo"]),
+
+  check("categoria_id", "El ID de la categoría debe ser un número entero").optional().isInt(),
+
+  check("marca", "La marca debe ser una cadena").optional().isString().isLength({ max: 100 }),
+
+  check("especificaciones", "Las especificaciones deben ser una cadena").optional().isString(),
+
+  check("color", "El color debe ser una cadena").optional().isString().isLength({ max: 50 }),
+
+  check("peso", "El peso debe ser una cadena").optional().isString().isLength({ max: 50 }),
+
+  check("dimensiones", "Las dimensiones deben ser una cadena").optional().isString(),
+
+  check("nuevo", "El campo 'nuevo' debe ser un booleano").optional().isBoolean(),
+
+  check("activo", "El campo 'activo' debe ser un booleano").isBoolean(),
+
+  validarCampos, // Middleware para manejar errores
 ];
 
-module.exports = { validateUpdateUser, validateRegister, validateLogin, validateProduct, validateCreateCategory };
+
+module.exports = { validateUpdateUser, validateRegister, validateLogin, validateProduct, validateCategory };

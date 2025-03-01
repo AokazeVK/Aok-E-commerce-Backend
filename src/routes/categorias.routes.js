@@ -1,44 +1,19 @@
 const express = require("express");
 const authMiddleware = require("../middlewares/auth.middleware");
-const adminMiddleware = require("../middlewares/admin.middleware");
 const validateMiddleware = require("../middlewares/validaciones.middleware");
 const categoryController = require("../controllers/categorias.controller");
 const router = express.Router();
+const rolesMiddleware = require("../middlewares/roles.middleware");
 
 
-// Obtener todas las categorías activas
-router.get("/activas", categoryController.getCategories); // Solo categorías activas
+// CRUD de categorías y subcategorías (Admin y Gestor de Productos)
+router.post("/", authMiddleware, rolesMiddleware.productManagerMiddleware, validateMiddleware.validateCategory, categoryController.createCategory);
+router.put("/:id", authMiddleware, rolesMiddleware.productManagerMiddleware,  validateMiddleware.validateCategory, categoryController.updateCategory);
+router.put("/:id/disable", authMiddleware, rolesMiddleware.productManagerMiddleware, categoryController.disableCategory);
+router.get('/activos', authMiddleware, rolesMiddleware.productManagerMiddleware, categoryController.getCategoriesActives); 
 
-// Todas las categorías (solo admin)
-router.get('/admin', authMiddleware, adminMiddleware, categoryController.getCategoriesAdmin); 
-
-// Obtener una categoría por ID
+// Obtener categorías y subcategorías (cualquier usuario puede verlas)
+router.get("/", categoryController.getCategories);
 router.get("/:id", categoryController.getCategoryById);
-
-// Crear una nueva categoría (Solo Admins)
-router.post(
-  "/",
-  authMiddleware,
-  adminMiddleware,
-  validateMiddleware.validateCreateCategory,
-  categoryController.createCategory
-);
-
-// Actualizar una categoría (Solo Admins)
-router.put(
-  "/:id",
-  authMiddleware,
-  adminMiddleware,
-  validateMiddleware.validateCreateCategory,
-  categoryController.updateCategory
-);
-
-// Deshabilitar una categoría (Solo Admins)
-router.put(
-  "/deshabilitar/:id",
-  authMiddleware,
-  adminMiddleware,
-  categoryController.disableCategory
-);
 
 module.exports = router;

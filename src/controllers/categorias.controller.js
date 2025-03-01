@@ -46,7 +46,7 @@ const getCategories = async (req, res) => {
 };
 
 // Obtener Categorias solo administrador
-const getCategoriesAdmin = async (req, res) => {
+const getCategoriesActives = async (req, res) => {
   try {
     const categorias = await prisma.categorias.findMany({
       where: { categoria_padre_id: null }, // Solo categorías principales
@@ -124,7 +124,7 @@ const disableCategory = async (req, res) => {
 module.exports = {
   createCategory,
   getCategories,
-  getCategoriesAdmin,
+  getCategoriesActives,
   getCategoryById,
   updateCategory,
   disableCategory,

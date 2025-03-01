@@ -1,32 +1,26 @@
 const express = require("express");
 const productsController = require("../controllers/productos.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
-const adminMiddleware = require("../middlewares/admin.middleware");
 const uploadMiddleware = require("../middlewares/upload.middleware");
+const rolesMiddleware = require("../middlewares/roles.middleware");
+const validateMiddleware = require("../middlewares/validaciones.middleware");
 const router = express.Router();
 
-// Crear un producto (solo admin)
-router.post("/", authMiddleware, adminMiddleware, productsController.createProduct);
 
-// Obtener todos los productos activos
+// CRUD de productos (solo Admin y Product Manager)
+router.post("/", authMiddleware, validateMiddleware.validateProduct, rolesMiddleware.productManagerMiddleware, productsController.createProduct);
+router.put("/:id", authMiddleware,validateMiddleware.validateProduct, rolesMiddleware.productManagerMiddleware, productsController.updateProduct);
+router.put("/:id/disable", authMiddleware, rolesMiddleware.productManagerMiddleware, productsController.disableProduct);
+router.get("/admin", authMiddleware, rolesMiddleware.productManagerMiddleware, productsController.getProductsAdmin);
+
+// Obtener productos (público)
 router.get("/", productsController.getProducts);
-
-router.get("/admin", authMiddleware, adminMiddleware, productsController.getProductsAdmin);
-
-// Obtener un producto por ID
 router.get("/:id", productsController.getProductById);
+router.get("/imagenes/:id", productsController.getImageOfProduct);
 
-// Actualizar un producto (solo admin)
-router.put("/:id", authMiddleware, adminMiddleware, productsController.updateProduct);
-
-// Deshabilitar un producto (en lugar de eliminarlo) (solo admin)
-router.put("/:id/disable", authMiddleware, adminMiddleware, productsController.disableProduct);
-
-router.post('/imagenes/:producto_id', uploadMiddleware, authMiddleware, adminMiddleware, productsController.uploadProductImages);
-
-router.get('/imagenes/:id', productsController.getImageOfProduct);
-
-router.delete('/imagenes/:id', authMiddleware, adminMiddleware, productsController.deleteImage);
+// Gestión de imágenes de productos (solo Admin y Product Manager)
+router.post("/imagenes/:producto_id", uploadMiddleware, authMiddleware, rolesMiddleware.productManagerMiddleware, productsController.uploadProductImages);
+router.delete("/imagenes/:id", authMiddleware, rolesMiddleware.productManagerMiddleware, productsController.deleteImage);
 
 
 

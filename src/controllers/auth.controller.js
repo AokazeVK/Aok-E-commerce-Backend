@@ -49,7 +49,7 @@ const register = async (req, res) => {
     }
 };
 
-const verificarCorreo = async (req, res) => {
+const verifyEmail = async (req, res) => {
     const { token } = req.params;
 
     try {
@@ -123,7 +123,7 @@ const login = async (req, res) => {
 };
 
 
-const solicitarRecuperacion = async (req, res) => {
+const forgotPassword = async (req, res) => {
     const { correo } = req.body;
 
     try {
@@ -158,7 +158,7 @@ const solicitarRecuperacion = async (req, res) => {
         res.status(500).send("Error interno del servidor");
     }
 };
-const restablecerContrasena = async (req, res) => {
+const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
 
@@ -184,7 +184,7 @@ const restablecerContrasena = async (req, res) => {
     }
 };
 
-const getUsuario = async (req, res) => {
+const getUser = async (req, res) => {
     try {
         const usuario = await prisma.usuarios.findUnique({
             where: { id: req.usuario.id },
@@ -210,4 +210,5 @@ const getUsuario = async (req, res) => {
     }
 };
 
-module.exports = { register, verificarCorreo, solicitarRecuperacion, restablecerContrasena, login, getUsuario };
+
+module.exports = { register, verifyEmail, forgotPassword, resetPassword, login, getUser };

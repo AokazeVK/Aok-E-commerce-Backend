@@ -5,20 +5,18 @@ const authMiddleware = require("../middlewares/auth.middleware");
 
 const validateMiddleware = require("../middlewares/validaciones.middleware");
 
-// Registro de usuario
-router.post("/register", validateMiddleware.validateRegister, authController.register);
 
-// Verificación de correo
-router.get("/verificar/:token", authController.verificarCorreo);
-
-//Recuperar contraseña
-router.post("/recuperar-contrasena", authController.solicitarRecuperacion);
-router.post("/restablecer-contrasena/:token", authController.restablecerContrasena);
-// Login de usuario
+// Registro e inicio de sesión
+router.post("/registro",validateMiddleware.validateRegister, authController.register);
 router.post("/login", validateMiddleware.validateLogin, authController.login);
 
+// Verificación de correo y recuperación de contraseña
+router.get("/verificar/:token", authController.verifyEmail);
+router.post("/recuperar", authController.forgotPassword);
+router.post("/restablecer/:token", authController.resetPassword);
+
 // Ruta protegida para obtener datos del usuario autenticado
-router.get("/me", authMiddleware, authController.getUsuario);
+router.get("/me", authMiddleware, authController.getUser);
 
 module.exports = router;
 
