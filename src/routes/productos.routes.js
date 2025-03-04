@@ -20,7 +20,7 @@ router.get("/imagenes/:id", productsController.getImageOfProduct);
 
 // Gestión de imágenes de productos (solo Admin y Product Manager)
 router.post("/imagenes/:producto_id", uploadMiddleware, authMiddleware, rolesMiddleware.productManagerMiddleware, productsController.uploadProductImages);
-router.delete("/imagenes/:id", authMiddleware, rolesMiddleware.productManagerMiddleware, productsController.deleteImage);
+router.delete("/imagenes/:producto_id/:id", authMiddleware, rolesMiddleware.productManagerMiddleware, productsController.deleteImage);
 
 
 

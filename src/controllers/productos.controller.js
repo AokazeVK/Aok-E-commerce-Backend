@@ -140,12 +140,15 @@ const getImageOfProduct = async (req, res) => {
 
 const deleteImage = async (req, res) => {
   try {
-    const { id } = req.params; // ID de la imagen
+    const { producto_id, id } = req.params; // IDs de producto e imagen
 
-    // Obtener la imagen de la BD
-    const imagen = await prisma.imagenes_producto.findUnique({ where: { id: parseInt(id) } });
-    if (!imagen) {
-      return res.status(404).json({ mensaje: 'Imagen no encontrada' });
+    // Verificar si la imagen pertenece al producto
+    const imagen = await prisma.imagenes_producto.findUnique({ 
+      where: { id: parseInt(id) }
+    });
+
+    if (!imagen || imagen.producto_id !== parseInt(producto_id)) {
+      return res.status(404).json({ mensaje: 'Imagen no encontrada o no pertenece al producto' });
     }
 
     // Extraer el ID de Cloudinary correctamente
