@@ -33,6 +33,7 @@ model categorias {
   descripcion String?
   activo      Boolean     @default(true)
   productos   productos[]
+  cupones     cupones[]
 
   // Relación para subcategorías
   categoria_padre_id Int?
@@ -43,12 +44,33 @@ model categorias {
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+enum TipoDescuento {
+  PORCENTAJE
+  MONTO
+}
+
 model cupones {
-  id               Int       @id @default(autoincrement())
-  codigo           String    @unique @db.VarChar(50)
-  descuento        Decimal?  @db.Decimal(5, 2)
-  fecha_expiracion DateTime  @db.Timestamp(6)
-  ordenes          ordenes[]
+  id               Int      @id @default(autoincrement())
+  codigo           String   @unique @db.VarChar(50)
+  tipo_descuento   String   @default("porcentaje") // "porcentaje" o "monto"
+  descuento        Decimal  @db.Decimal(5, 2) // Puede ser % o monto fijo
+  fecha_expiracion DateTime @db.Timestamp(6)
+  activo           Boolean  @default(true) // Para desactivar cupones sin eliminarlos
+  limite_uso       Int? // Número máximo de veces que se puede usar
+  usos_realizados  Int      @default(0) // Veces que ha sido utilizado
+  minimo_compra    Decimal? @db.Decimal(10, 2) // Monto mínimo de compra para aplicar el cupón
+
+  // Opciones de restricción
+  producto_id Int?
+  producto    productos? @relation(fields: [producto_id], references: [id], onDelete: SetNull) // Solo aplica a un producto específico
+
+  categoria_id Int?
+  categoria    categorias? @relation(fields: [categoria_id], references: [id], onDelete: SetNull) // Aplica a una categoría específica
+
+  usuario_id Int?
+  usuario    usuarios? @relation(fields: [usuario_id], references: [id], onDelete: SetNull) // Si es un cupón exclusivo para un usuario
+
+  ordenes ordenes[] // Relación con órdenes donde se ha aplicado
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -66,9 +88,9 @@ model direcciones_envio {
   id             Int       @id @default(autoincrement())
   usuario_id     Int?
   direccion      String
-  ciudad         String?   @db.VarChar(100)
-  codigo_postal  String?   @db.VarChar(20)
-  pais           String?   @db.VarChar(100)
+  ciudad         String    @db.VarChar(100)
+  codigo_postal  String    @db.VarChar(20)
+  pais           String    @db.VarChar(100)
   predeterminada Boolean?  @default(false)
   usuarios       usuarios? @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   ordenes        ordenes[]
@@ -138,6 +160,7 @@ model productos {
   imagenes_producto imagenes_producto[]
   categorias        categorias?         @relation(fields: [categoria_id], references: [id], onUpdate: NoAction)
   resenas           resenas[]
+  cupones           cupones[] // Relación con cupones
 
   // Nuevos atributos
   marca            String?  @db.VarChar(100)
@@ -175,8 +198,22 @@ model usuarios {
   token_verificacion                  String?             @unique // Token para verificar el correo (opcional, pero útil)
   token_recuperacion                  String?
   fecha_expiracion_token_recuperacion DateTime?           @db.Timestamp(6)
+  customer_id                         String?             @unique // Guardamos el ID de cliente de Stripe
+  tarjetas                            tarjetas[]
   carrito                             carrito?
   direcciones_envio                   direcciones_envio[]
   ordenes                             ordenes[]
   resenas                             resenas[]
+  cupones                             cupones[]
+}
+
+model tarjetas {
+  id              Int      @id @default(autoincrement())
+  usuario_id      Int      @unique
+  stripe_pm_id    String   @unique // ID del Payment Method en Stripe
+  ultimos_digitos String   @db.VarChar(4)
+  marca           String   @db.VarChar(50)
+  fecha_exp       String   @db.VarChar(7) // MM/YYYY
+  usuario         usuarios @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
 }

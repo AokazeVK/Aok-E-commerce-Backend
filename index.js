@@ -8,6 +8,7 @@ const categoriesRoutes = require("./src/routes/categorias.routes");
 const productsRoutes = require("./src/routes/productos.routes");
 const cartRoutes = require("./src/routes/carrito.routes");
 const addressRoutes = require("./src/routes/direcciones.routes");
+const couponRoutes = require("./src/routes/cupones.routes");
 const app = express();
  
 // Middlewares
@@ -22,6 +23,8 @@ app.use("/api/categorias", categoriesRoutes);
 app.use("/api/productos", productsRoutes);
 app.use("/api/carrito", cartRoutes);
 app.use("/api/direcciones", addressRoutes);
+app.use("/api/cupones", couponRoutes);
+
 
 // Ruta de prueba
 app.get("/", (req, res) => {

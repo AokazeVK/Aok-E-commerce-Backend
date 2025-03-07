@@ -1,9 +1,8 @@
-const express = require("express");
-const { check, validationResult } = require("express-validator");
+const { validationResult } = require("express-validator");
+const stripe = require("../config/stripe"); 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/prisma");
 const crypto = require("crypto");
 const transporter = require("../config/email");
 
@@ -16,10 +15,19 @@ const register = async (req, res) => {
             return res.status(400).json({ error: "El usuario ya existe" });
         }
 
+        // Encriptar la contraseña
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
         const token_verificacion = crypto.randomBytes(32).toString("hex");
 
+        // Crear usuario en Stripe
+        const stripeCustomer = await stripe.customers.create({
+            email: correo,
+            name: `${nombre} ${apellido}`,
+            phone: telefono || undefined, // Solo se envía si tiene teléfono
+        });
+
+        // Guardar usuario en la base de datos
         usuario = await prisma.usuarios.create({
             data: {
                 nombre,
@@ -29,6 +37,7 @@ const register = async (req, res) => {
                 telefono,
                 rol: rol || "cliente",
                 token_verificacion,
+                customer_id: stripeCustomer.id, // Guardamos el ID de Stripe
             },
         });
 
@@ -44,7 +53,7 @@ const register = async (req, res) => {
 
         res.status(201).json({ mensaje: "Registro exitoso. Revisa tu correo para verificar tu cuenta." });
     } catch (error) {
-        console.error(error);
+        console.error("Error en el registro:", error);
         res.status(500).send("Error interno del servidor");
     }
 };

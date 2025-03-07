@@ -6,18 +6,18 @@ const validateMiddleware = require("../middlewares/validaciones.middleware");
 
 
 // Obtener todas las direcciones del usuario
-router.get("/direcciones", authMiddleware, addressesController.getAddresses);
+router.get("/", authMiddleware, addressesController.getAddresses);
 
 // Agregar una nueva dirección
-router.post("/direcciones", authMiddleware, validateMiddleware.validateAddAddress, addressesController.addAddress);
+router.post("/", authMiddleware, validateMiddleware.validateAddAddress, addressesController.addAddress);
 
 // Editar una dirección existente
-router.put("/direcciones/:id", authMiddleware, validateMiddleware.validateIdAddress, validateMiddleware.validateUpdateQuantity, addressesController.updateAddress);
+router.put("/:id", authMiddleware, validateMiddleware.validateIdAddress, validateMiddleware.validateUpdateAddress, addressesController.updateAddress);
 
 // Eliminar una dirección
-router.delete("/direcciones/:id", authMiddleware, validateMiddleware.validateIdAddress, addressesController.deleteAddress);
+router.delete("/:id/delete", authMiddleware, validateMiddleware.validateIdAddress, addressesController.deleteAddress);
 
 // Marcar una dirección como predeterminada
-router.patch("/direcciones/:id/predeterminada", authMiddleware, validateMiddleware.validateIdAddress, addressesController.markAsDefaultAddress);
+router.patch("/:id/default", authMiddleware, validateMiddleware.validateIdAddress, addressesController.markAsDefaultAddress);
 
 module.exports = router;

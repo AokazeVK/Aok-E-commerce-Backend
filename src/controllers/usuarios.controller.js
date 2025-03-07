@@ -1,7 +1,5 @@
-const express = require("express");
-const { check, validationResult } = require("express-validator");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { validationResult } = require("express-validator");
+const prisma = require("../config/prisma");
 
 // Obtener perfil del usuario
 const getUser = async (req, res) => {
@@ -88,6 +86,7 @@ const getUsers = async (req, res) => {
       res.status(500).send("Error interno del servidor");
   }
 };
+
 
 
 module.exports = { getUser, updateUser, deleteUser, getUsers };

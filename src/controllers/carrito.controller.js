@@ -1,6 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-
+const prisma = require("../config/prisma");
 // Función auxiliar para calcular el total del carrito
 const calcularTotalCarrito = async (carritoId) => {
     const items = await prisma.carrito_item.findMany({

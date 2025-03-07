@@ -15,6 +15,6 @@ router.get("/perfil", authMiddleware, usersController.getUser);
 router.put("/perfil", authMiddleware, validateMiddleware.validateUpdateUser, usersController.updateUser);
 
 //Eliminar usuario
-router.delete("/perfil", authMiddleware, rolesMiddleware.adminMiddleware, usersController.deleteUser);
+router.delete("/perfil", authMiddleware, usersController.deleteUser);
 
 module.exports = router;

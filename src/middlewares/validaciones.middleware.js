@@ -162,8 +162,8 @@ const validateUpdateQuantity = [
 // Validaciones para agregar una nueva dirección
 const validateAddAddress = [
   body("direccion").notEmpty().withMessage("La dirección es obligatoria"),
-  body("ciudad").optional().isString().withMessage("La ciudad debe ser un texto"),
-  body("codigo_postal").optional().isString().withMessage("El código postal debe ser un texto"),
+  body("ciudad").notEmpty().isString().withMessage("La ciudad es obligatoria"),
+  body("codigo_postal").notEmpty().isString().withMessage("El código postal es obligatorio"),
   body("pais").notEmpty().withMessage("El país es obligatorio"),
   body("predeterminada").optional().isBoolean().withMessage("El valor de predeterminada debe ser booleano"),
   validarCampos,
@@ -173,8 +173,8 @@ const validateAddAddress = [
 const validateUpdateAddress = [
   param("id").isInt().withMessage("El ID debe ser un número entero"),
   body("direccion").notEmpty().withMessage("La dirección es obligatoria"),
-  body("ciudad").optional().isString().withMessage("La ciudad debe ser un texto"),
-  body("codigo_postal").optional().isString().withMessage("El código postal debe ser un texto"),
+  body("ciudad").optional().isString().withMessage("La ciudad es obligatoria"),
+  body("codigo_postal").optional().isString().withMessage("El código postal es obligatorio"),
   body("pais").notEmpty().withMessage("El país es obligatorio"),
   body("predeterminada").optional().isBoolean().withMessage("El valor de predeterminada debe ser booleano"),
   validarCampos,
